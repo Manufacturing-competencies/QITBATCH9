@@ -1,0 +1,2510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>QIT Batch 9 Kick Off</title>
+
+<style>
+
+/* =========================================================
+   RESET
+========================================================= */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html,
+body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:Arial, Helvetica, sans-serif;
+  background:#03050d;
+  color:white;
+}
+
+body{
+  user-select:none;
+}
+
+/* =========================================================
+   APP
+========================================================= */
+
+#app{
+  position:relative;
+  width:100vw;
+  height:100vh;
+  overflow:hidden;
+
+  background:
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(95,70,255,.30),
+      transparent 28%
+    ),
+
+    radial-gradient(
+      circle at 22% 78%,
+      rgba(0,215,255,.16),
+      transparent 24%
+    ),
+
+    radial-gradient(
+      circle at 82% 25%,
+      rgba(30,90,255,.12),
+      transparent 22%
+    ),
+
+    linear-gradient(
+      180deg,
+      #070a1b 0%,
+      #050718 48%,
+      #02030a 100%
+    );
+}
+
+/* =========================================================
+   ANIMATED GLOW
+========================================================= */
+
+.bgGlow{
+  position:absolute;
+  width:760px;
+  height:760px;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(93,67,255,.32),
+      rgba(0,194,255,.11),
+      transparent 67%
+    );
+
+  filter:blur(38px);
+
+  animation:bgPulse 4.5s ease-in-out infinite;
+}
+
+@keyframes bgPulse{
+
+  0%,100%{
+    transform:
+      translate(-50%,-50%)
+      scale(.92);
+    opacity:.65;
+  }
+
+  50%{
+    transform:
+      translate(-50%,-50%)
+      scale(1.12);
+    opacity:1;
+  }
+
+}
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.grid{
+  position:absolute;
+  inset:-20%;
+
+  background-image:
+    linear-gradient(
+      rgba(79,172,255,.08) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(79,172,255,.08) 1px,
+      transparent 1px
+    );
+
+  background-size:55px 55px;
+
+  transform:
+    perspective(680px)
+    rotateX(61deg)
+    translateY(25%);
+
+  transform-origin:center bottom;
+
+  opacity:.32;
+
+  animation:gridMove 11s linear infinite;
+}
+
+@keyframes gridMove{
+
+  from{
+    background-position:0 0;
+  }
+
+  to{
+    background-position:0 110px;
+  }
+
+}
+
+/* =========================================================
+   SCAN LINE
+========================================================= */
+
+.scan{
+  position:absolute;
+  top:-20%;
+  left:0;
+  width:100%;
+  height:15%;
+
+  pointer-events:none;
+
+  background:
+    linear-gradient(
+      to bottom,
+      transparent,
+      rgba(82,224,255,.07),
+      transparent
+    );
+
+  animation:scanMove 6s linear infinite;
+}
+
+@keyframes scanMove{
+
+  from{
+    transform:translateY(-15vh);
+  }
+
+  to{
+    transform:translateY(135vh);
+  }
+
+}
+
+/* =========================================================
+   VIGNETTE
+========================================================= */
+
+.vignette{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+
+  background:
+    radial-gradient(
+      circle,
+      transparent 46%,
+      rgba(0,0,0,.78) 100%
+    );
+}
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+#particles{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+}
+
+.particle{
+  position:absolute;
+  width:3px;
+  height:3px;
+  border-radius:50%;
+
+  background:#9cefff;
+
+  box-shadow:
+    0 0 8px #55d9ff,
+    0 0 18px rgba(104,75,255,.8);
+
+  animation:particleMove linear infinite;
+}
+
+@keyframes particleMove{
+
+  from{
+    transform:
+      translateY(110vh)
+      scale(.55);
+    opacity:0;
+  }
+
+  20%{
+    opacity:.8;
+  }
+
+  80%{
+    opacity:.55;
+  }
+
+  to{
+    transform:
+      translateY(-20vh)
+      scale(1.3);
+    opacity:0;
+  }
+
+}
+
+/* =========================================================
+   LOGO BAR
+========================================================= */
+
+.logoBar{
+  position:absolute;
+  top:22px;
+  left:28px;
+  right:28px;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  z-index:50;
+}
+
+/* =========================================================
+   LOGO CAPSULE
+========================================================= */
+
+.logoCapsule{
+  min-height:58px;
+  min-width:150px;
+
+  padding:9px 20px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:999px;
+
+  background:
+    rgba(255,255,255,.94);
+
+  border:
+    1px solid rgba(255,255,255,.90);
+
+  box-shadow:
+    0 8px 28px rgba(0,0,0,.20),
+    0 0 28px rgba(75,181,255,.10);
+
+  backdrop-filter:blur(10px);
+}
+
+.logoCapsule img{
+  display:block;
+  max-height:38px;
+  max-width:180px;
+  object-fit:contain;
+}
+
+.logoFallback{
+  color:#17305f;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+/* =========================================================
+   HUD
+========================================================= */
+
+.hud{
+  position:absolute;
+  top:95px;
+  left:34px;
+  right:34px;
+
+  display:flex;
+  justify-content:space-between;
+
+  z-index:30;
+
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:rgba(189,231,255,.65);
+}
+
+.hudItem{
+  padding:8px 11px;
+
+  border:
+    1px solid rgba(104,210,255,.16);
+
+  background:
+    rgba(4,15,39,.40);
+
+  border-radius:7px;
+
+  backdrop-filter:blur(9px);
+}
+
+/* =========================================================
+   CORNERS
+========================================================= */
+
+.corner{
+  position:absolute;
+  width:92px;
+  height:92px;
+
+  z-index:5;
+
+  border-color:
+    rgba(91,210,255,.32);
+}
+
+.c1{
+  top:132px;
+  left:35px;
+  border-top:1px solid;
+  border-left:1px solid;
+}
+
+.c2{
+  top:132px;
+  right:35px;
+  border-top:1px solid;
+  border-right:1px solid;
+}
+
+.c3{
+  bottom:35px;
+  left:35px;
+  border-bottom:1px solid;
+  border-left:1px solid;
+}
+
+.c4{
+  bottom:35px;
+  right:35px;
+  border-bottom:1px solid;
+  border-right:1px solid;
+}
+
+/* =========================================================
+   SCENES
+========================================================= */
+
+.scene{
+  position:absolute;
+  inset:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  text-align:center;
+
+  padding:
+    130px
+    50px
+    75px;
+
+  z-index:10;
+
+  opacity:0;
+  pointer-events:none;
+
+  transform:scale(1.04);
+
+  filter:blur(9px);
+
+  transition:
+    opacity .85s ease,
+    transform .85s ease,
+    filter .85s ease;
+}
+
+.scene.active{
+  opacity:1;
+  pointer-events:auto;
+  transform:scale(1);
+  filter:blur(0);
+}
+
+/* =========================================================
+   COMMON TEXT
+========================================================= */
+
+.eyebrow{
+  font-size:13px;
+  letter-spacing:.34em;
+  text-transform:uppercase;
+  color:#8beeff;
+  margin-bottom:24px;
+}
+
+.bigTitle{
+  font-size:
+    clamp(58px,9vw,135px);
+
+  line-height:.88;
+
+  font-weight:900;
+
+  letter-spacing:.01em;
+
+  text-transform:uppercase;
+
+  color:white;
+
+  text-shadow:
+    0 0 22px rgba(81,164,255,.55),
+    0 0 58px rgba(123,66,255,.36);
+}
+
+.subTitle{
+  margin-top:25px;
+
+  font-size:
+    clamp(15px,2vw,23px);
+
+  letter-spacing:.19em;
+
+  text-transform:uppercase;
+
+  color:rgba(255,255,255,.72);
+}
+
+/* =========================================================
+   ENTER BUTTON
+========================================================= */
+
+.enterButton{
+  margin-top:48px;
+
+  min-width:340px;
+  min-height:70px;
+
+  padding:0 42px;
+
+  border-radius:8px;
+
+  border:
+    1px solid
+    rgba(94,220,255,.78);
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(91,65,255,.38),
+      rgba(0,194,255,.18)
+    );
+
+  color:white;
+
+  font-size:17px;
+
+  font-weight:800;
+
+  letter-spacing:.20em;
+
+  text-transform:uppercase;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 0 22px rgba(50,187,255,.25),
+    inset 0 0 24px rgba(69,218,255,.10);
+
+  animation:
+    buttonPulse
+    1.7s
+    ease-in-out
+    infinite;
+
+  transition:.25s ease;
+}
+
+.enterButton:hover{
+  transform:scale(1.06);
+
+  box-shadow:
+    0 0 35px rgba(52,200,255,.55),
+    0 0 70px rgba(114,65,255,.35);
+}
+
+@keyframes buttonPulse{
+
+  0%,100%{
+    box-shadow:
+      0 0 16px
+      rgba(52,190,255,.18);
+  }
+
+  50%{
+    box-shadow:
+      0 0 42px
+      rgba(52,190,255,.54);
+  }
+
+}
+
+.waiting{
+  margin-top:19px;
+
+  font-size:10px;
+
+  letter-spacing:.29em;
+
+  text-transform:uppercase;
+
+  color:
+    rgba(189,230,255,.50);
+
+  animation:
+    waitingBlink
+    1.5s
+    infinite;
+}
+
+@keyframes waitingBlink{
+
+  0%,100%{
+    opacity:.25;
+  }
+
+  50%{
+    opacity:1;
+  }
+
+}
+
+/* =========================================================
+   STATUS BOX
+========================================================= */
+
+.statusBox{
+  margin:
+    30px auto 0;
+
+  width:
+    min(540px,82vw);
+
+  text-align:left;
+
+  border:
+    1px solid
+    rgba(105,211,255,.18);
+
+  background:
+    rgba(7,17,43,.48);
+
+  backdrop-filter:
+    blur(12px);
+
+  padding:
+    16px 21px;
+
+  border-radius:10px;
+}
+
+.statusRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:7px 0;
+
+  font-size:11px;
+
+  letter-spacing:.11em;
+
+  text-transform:uppercase;
+
+  color:
+    rgba(255,255,255,.67);
+
+  border-bottom:
+    1px solid
+    rgba(255,255,255,.05);
+}
+
+.statusRow:last-child{
+  border-bottom:none;
+}
+
+.online{
+  color:#7bf0ff;
+  font-weight:bold;
+}
+
+/* =========================================================
+   CINEMATIC WORD
+========================================================= */
+
+.cinematicWord{
+  font-size:
+    clamp(52px,8vw,122px);
+
+  font-weight:900;
+
+  line-height:.94;
+
+  letter-spacing:.03em;
+
+  text-transform:uppercase;
+
+  color:white;
+
+  text-shadow:
+    0 0 28px rgba(54,198,255,.50),
+    0 0 70px rgba(105,56,255,.38);
+}
+
+/* =========================================================
+   XP / LOADING
+========================================================= */
+
+.xpWrapper{
+  width:
+    min(700px,82vw);
+
+  margin:
+    42px auto 0;
+}
+
+.xpLabel{
+  display:flex;
+  justify-content:space-between;
+
+  margin-bottom:11px;
+
+  font-size:11px;
+
+  letter-spacing:.17em;
+
+  text-transform:uppercase;
+
+  color:
+    rgba(203,235,255,.65);
+}
+
+.xpTrack{
+  width:100%;
+  height:12px;
+
+  overflow:hidden;
+
+  border-radius:999px;
+
+  background:
+    rgba(255,255,255,.07);
+
+  border:
+    1px solid
+    rgba(84,201,255,.18);
+}
+
+.xpBar{
+  width:0%;
+  height:100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      #755aff,
+      #2ad7ff
+    );
+
+  box-shadow:
+    0 0 22px
+    rgba(45,211,255,.7);
+}
+
+/* =========================================================
+   COUNTDOWN
+========================================================= */
+
+.countNumber{
+  font-size:
+    clamp(150px,25vw,350px);
+
+  font-weight:900;
+
+  line-height:1;
+
+  color:white;
+
+  text-shadow:
+    0 0 35px rgba(72,210,255,.72),
+    0 0 95px rgba(119,58,255,.52);
+}
+
+/* =========================================================
+   ENERGY RING
+========================================================= */
+
+.energyRing{
+  position:absolute;
+
+  width:430px;
+  height:430px;
+
+  left:50%;
+  top:50%;
+
+  transform:
+    translate(-50%,-50%);
+
+  border-radius:50%;
+
+  border:
+    1px solid
+    rgba(94,219,255,.32);
+
+  box-shadow:
+    0 0 55px rgba(70,203,255,.15),
+    inset 0 0 55px rgba(115,67,255,.14);
+
+  animation:
+    ringRotate
+    9s
+    linear
+    infinite;
+
+  pointer-events:none;
+}
+
+.energyRing:before,
+.energyRing:after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+}
+
+.energyRing:before{
+  inset:26px;
+
+  border:
+    1px dashed
+    rgba(147,102,255,.35);
+}
+
+.energyRing:after{
+  inset:64px;
+
+  border:
+    1px solid
+    rgba(69,211,255,.18);
+}
+
+@keyframes ringRotate{
+
+  from{
+    transform:
+      translate(-50%,-50%)
+      rotate(0deg);
+  }
+
+  to{
+    transform:
+      translate(-50%,-50%)
+      rotate(360deg);
+  }
+
+}
+
+/* =========================================================
+   REVEAL
+========================================================= */
+
+.qitTitle{
+  position:relative;
+  z-index:4;
+
+  font-size:
+    clamp(62px,10vw,148px);
+
+  font-weight:900;
+
+  line-height:.88;
+
+  text-transform:uppercase;
+
+  color:white;
+
+  text-shadow:
+    0 0 30px rgba(55,209,255,.62),
+    0 0 78px rgba(113,58,255,.48);
+}
+
+.kickoff{
+  position:relative;
+  z-index:4;
+
+  margin-top:19px;
+
+  font-size:
+    clamp(34px,5vw,74px);
+
+  font-weight:800;
+
+  letter-spacing:.30em;
+
+  text-transform:uppercase;
+
+  color:#88efff;
+}
+
+.tagline{
+  position:relative;
+  z-index:4;
+
+  margin-top:28px;
+
+  font-size:
+    clamp(14px,1.6vw,20px);
+
+  letter-spacing:.21em;
+
+  text-transform:uppercase;
+
+  color:
+    rgba(255,255,255,.72);
+}
+
+/* =========================================================
+   FINAL
+========================================================= */
+
+.finalTitle{
+  font-size:
+    clamp(62px,10vw,145px);
+
+  font-weight:900;
+
+  line-height:.9;
+
+  text-transform:uppercase;
+
+  color:white;
+
+  text-shadow:
+    0 0 30px rgba(67,200,255,.54),
+    0 0 75px rgba(112,60,255,.40);
+}
+
+/* =========================================================
+   FLASH
+========================================================= */
+
+.flash{
+  position:absolute;
+  inset:0;
+
+  background:white;
+
+  opacity:0;
+
+  pointer-events:none;
+
+  z-index:100;
+}
+
+.flash.go{
+  animation:
+    flashAnim
+    .55s
+    ease;
+}
+
+@keyframes flashAnim{
+
+  0%{
+    opacity:0;
+  }
+
+  22%{
+    opacity:.90;
+  }
+
+  100%{
+    opacity:0;
+  }
+
+}
+
+/* =========================================================
+   SHAKE
+========================================================= */
+
+.shake{
+  animation:
+    shakeAnim
+    .4s
+    linear;
+}
+
+@keyframes shakeAnim{
+
+  0%{
+    transform:translate(0);
+  }
+
+  20%{
+    transform:translate(-10px,4px);
+  }
+
+  40%{
+    transform:translate(8px,-3px);
+  }
+
+  60%{
+    transform:translate(-6px,3px);
+  }
+
+  80%{
+    transform:translate(4px,-2px);
+  }
+
+  100%{
+    transform:translate(0);
+  }
+
+}
+
+/* =========================================================
+   GLITCH
+========================================================= */
+
+.glitch{
+  animation:
+    glitchAnim
+    .35s
+    linear;
+}
+
+@keyframes glitchAnim{
+
+  0%{
+    transform:translate(0);
+  }
+
+  20%{
+    transform:translate(-11px,2px);
+  }
+
+  40%{
+    transform:translate(9px,-4px);
+  }
+
+  60%{
+    transform:translate(-6px,4px);
+  }
+
+  80%{
+    transform:translate(5px,-2px);
+  }
+
+  100%{
+    transform:translate(0);
+  }
+
+}
+
+/* =========================================================
+   CONTROLS
+========================================================= */
+
+.controls{
+  position:absolute;
+  right:22px;
+  bottom:20px;
+
+  display:flex;
+  gap:8px;
+
+  z-index:90;
+}
+
+.controlBtn{
+  border:
+    1px solid
+    rgba(112,209,255,.20);
+
+  background:
+    rgba(4,14,35,.60);
+
+  backdrop-filter:
+    blur(10px);
+
+  color:
+    rgba(216,243,255,.80);
+
+  padding:
+    9px 12px;
+
+  border-radius:7px;
+
+  cursor:pointer;
+
+  font-size:10px;
+
+  letter-spacing:.08em;
+
+  text-transform:uppercase;
+
+  transition:.2s ease;
+}
+
+.controlBtn:hover{
+  color:white;
+
+  border-color:
+    rgba(112,222,255,.55);
+
+  background:
+    rgba(7,27,60,.82);
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:700px){
+
+  .logoCapsule{
+    min-width:110px;
+    min-height:48px;
+    padding:7px 12px;
+  }
+
+  .logoCapsule img{
+    max-height:30px;
+    max-width:130px;
+  }
+
+  .hud{
+    top:83px;
+    left:10px;
+    right:10px;
+    gap:5px;
+    font-size:7px;
+  }
+
+  .controls{
+    right:8px;
+    bottom:8px;
+  }
+
+  .controlBtn{
+    font-size:8px;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+  <!-- BACKGROUND -->
+
+  <div class="bgGlow"></div>
+  <div class="grid"></div>
+  <div class="scan"></div>
+  <div id="particles"></div>
+  <div class="vignette"></div>
+
+  <!-- LOGOS -->
+
+  <div class="logoBar">
+
+    <div class="logoCapsule">
+
+      <img
+        src="logo-pic.png"
+        alt="Paragon Innovation Challenge"
+        onerror="
+          this.style.display='none';
+          document
+          .getElementById('picFallback')
+          .style.display='block';
+        "
+      >
+
+      <div
+        class="logoFallback"
+        id="picFallback"
+        style="display:none;"
+      >
+        Paragon Innovation Challenge
+      </div>
+
+    </div>
+
+
+    <div class="logoCapsule">
+
+      <img
+        src="logo-paragon.png"
+        alt="Paragon"
+        onerror="
+          this.style.display='none';
+          document
+          .getElementById('paragonFallback')
+          .style.display='block';
+        "
+      >
+
+      <div
+        class="logoFallback"
+        id="paragonFallback"
+        style="display:none;"
+      >
+        PARAGON
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- HUD -->
+
+  <div class="hud">
+
+    <span
+      class="hudItem"
+      id="playerHud"
+    >
+      PLAYER: STANDBY
+    </span>
+
+    <span
+      class="hudItem"
+      id="missionHud"
+    >
+      MISSION: LOCKED
+    </span>
+
+    <span class="hudItem">
+      BATCH: 09
+    </span>
+
+  </div>
+
+  <!-- CORNERS -->
+
+  <div class="corner c1"></div>
+  <div class="corner c2"></div>
+  <div class="corner c3"></div>
+  <div class="corner c4"></div>
+
+  <!-- =====================================================
+       SCENE 0
+  ====================================================== -->
+
+  <section
+    class="scene active"
+    id="scene0"
+  >
+
+    <div>
+
+      <div class="eyebrow">
+        Game Initialization
+      </div>
+
+      <div class="bigTitle">
+        QIT
+        <br>
+        BATCH 9
+      </div>
+
+      <div class="subTitle">
+        A New Challenge Is Waiting
+      </div>
+
+      <div class="statusBox">
+
+        <div class="statusRow">
+
+          <span>
+            Connection
+          </span>
+
+          <span class="online">
+            ONLINE
+          </span>
+
+        </div>
+
+        <div class="statusRow">
+
+          <span>
+            Mission
+          </span>
+
+          <span>
+            LOCKED
+          </span>
+
+        </div>
+
+        <div class="statusRow">
+
+          <span>
+            Player Status
+          </span>
+
+          <span>
+            WAITING
+          </span>
+
+        </div>
+
+      </div>
+
+      <button
+        class="enterButton"
+        id="enterButton"
+      >
+        ENTER THE GAME
+      </button>
+
+      <div class="waiting">
+        Waiting for player input...
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- =====================================================
+       CONNECTED
+  ====================================================== -->
+
+  <section
+    class="scene"
+    id="sceneConnected"
+  >
+
+    <div>
+
+      <div class="eyebrow">
+        Authentication Complete
+      </div>
+
+      <div class="cinematicWord">
+        PLAYER
+        <br>
+        CONNECTED
+      </div>
+
+      <div class="subTitle">
+        Welcome to the challenge
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- =====================================================
+       MISSION
+  ====================================================== -->
+
+  <section
+    class="scene"
+    id="sceneMission"
+  >
+
+    <div>
+
+      <div class="eyebrow">
+        Incoming Mission
+      </div>
+
+      <div class="cinematicWord">
+        MISSION
+        <br>
+        DETECTED
+      </div>
+
+      <div class="subTitle">
+        New Challenge Available
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- =====================================================
+       CLUE
+  ====================================================== -->
+
+  <section
+    class="scene"
+    id="sceneClue"
+  >
+
+    <div>
+
+      <div class="eyebrow">
+        Objective 01
+      </div>
+
+      <div class="cinematicWord">
+        FIND
+        <br>
+        THE CLUE
+      </div>
+
+      <div class="subTitle">
+        Data reveals what others miss
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- =====================================================
+       PROBLEM
+  ====================================================== -->
+
+  <section
+    class="scene"
+    id="sceneProblem"
+  >
+
+    <div>
+
+      <div class="eyebrow">
+        Objective 02
+      </div>
+
+      <div class="cinematicWord">
+        SOLVE
+        <br>
+        THE PROBLEM
+      </div>
+
+      <div class="subTitle">
+        Turn clues into strategy
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- =====================================================
+       MOVE
+  ====================================================== -->
+
+  <section
+    class="scene"
+    id="sceneMove"
+  >
+
+    <div>
+
+      <div class="eyebrow">
+        Objective 03
+      </div>
+
+      <div class="cinematicWord">
+        MAKE
+        <br>
+        YOUR MOVE
+      </div>
+
+      <div class="subTitle">
+        Every improvement begins with action
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- =====================================================
+       LEVEL UP
+  ====================================================== -->
+
+  <section
+    class="scene"
+    id="sceneLevel"
+  >
+
+    <div>
+
+      <div class="eyebrow">
+        Objective 04
+      </div>
+
+      <div class="cinematicWord">
+        LEVEL
+        <br>
+        UP
+      </div>
+
+      <div class="subTitle">
+        Improve • Implement • Impact
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- =====================================================
+       LOADING
+  ====================================================== -->
+
+  <section
+    class="scene"
+    id="sceneLoading"
+  >
+
+    <div>
+
+      <div class="eyebrow">
+        Mission Initialization
+      </div>
+
+      <div
+        class="cinematicWord"
+        style="
+          font-size:
+          clamp(
+            45px,
+            7vw,
+            95px
+          );
+        "
+      >
+        LOADING
+        <br>
+        MISSION
+      </div>
+
+      <div class="xpWrapper">
+
+        <div class="xpLabel">
+
+          <span>
+            Mission Progress
+          </span>
+
+          <span id="loadingPercent">
+            0%
+          </span>
+
+        </div>
+
+        <div class="xpTrack">
+
+          <div
+            class="xpBar"
+            id="loadingBar"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- =====================================================
+       READY
+  ====================================================== -->
+
+  <section
+    class="scene"
+    id="sceneReady"
+  >
+
+    <div>
+
+      <div class="eyebrow">
+        Initialization Complete
+      </div>
+
+      <div class="cinematicWord">
+        SYSTEM
+        <br>
+        READY
+      </div>
+
+      <div class="subTitle">
+        Mission Unlocked
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- =====================================================
+       COUNTDOWN
+  ====================================================== -->
+
+  <section
+    class="scene"
+    id="sceneCountdown"
+  >
+
+    <div>
+
+      <div class="eyebrow">
+        Game Starting
+      </div>
+
+      <div
+        class="countNumber"
+        id="countNumber"
+      >
+        3
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- =====================================================
+       REVEAL
+  ====================================================== -->
+
+  <section
+    class="scene"
+    id="sceneReveal"
+  >
+
+    <div>
+
+      <div class="energyRing"></div>
+
+      <div class="eyebrow">
+        Paragon Innovation Challenge
+      </div>
+
+      <div class="qitTitle">
+        QIT BATCH 9
+      </div>
+
+      <div class="kickoff">
+        KICK OFF
+      </div>
+
+      <div class="tagline">
+        PLAY • SOLVE • IMPROVE
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- =====================================================
+       FINAL
+  ====================================================== -->
+
+  <section
+    class="scene"
+    id="sceneFinal"
+  >
+
+    <div>
+
+      <div class="eyebrow">
+        Mission Activated
+      </div>
+
+      <div class="finalTitle">
+        THE GAME
+        <br>
+        STARTS NOW
+      </div>
+
+      <div class="tagline">
+        FIND THE PROBLEM
+        •
+        UNLOCK THE SOLUTION
+        •
+        LEVEL UP THE IMPROVEMENT
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- FLASH -->
+
+  <div
+    class="flash"
+    id="flash"
+  ></div>
+
+  <!-- CONTROLS -->
+
+  <div class="controls">
+
+    <button
+      class="controlBtn"
+      id="fullscreenBtn"
+    >
+      ⛶ Fullscreen
+    </button>
+
+    <button
+      class="controlBtn"
+      id="soundBtn"
+    >
+      🔊 Sound On
+    </button>
+
+    <button
+      class="controlBtn"
+      id="restartBtn"
+    >
+      ↻ Restart
+    </button>
+
+  </div>
+
+</div>
+
+<!-- =========================================================
+     AUDIO
+========================================================= -->
+
+<audio
+  id="bgm"
+  loop
+  preload="auto"
+>
+  <source
+    src="bgm.mp3"
+    type="audio/mpeg"
+  >
+</audio>
+
+<audio
+  id="clickSound"
+  preload="auto"
+>
+  <source
+    src="click.mp3"
+    type="audio/mpeg"
+  >
+</audio>
+
+<audio
+  id="glitchSound"
+  preload="auto"
+>
+  <source
+    src="glitch.mp3"
+    type="audio/mpeg"
+  >
+</audio>
+
+<audio
+  id="impactSound"
+  preload="auto"
+>
+  <source
+    src="impact.mp3"
+    type="audio/mpeg"
+  >
+</audio>
+
+<audio
+  id="beepSound"
+  preload="auto"
+>
+  <source
+    src="beep.mp3"
+    type="audio/mpeg"
+  >
+</audio>
+
+<audio
+  id="revealSound"
+  preload="auto"
+>
+  <source
+    src="reveal.mp3"
+    type="audio/mpeg"
+  >
+</audio>
+
+<script>
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const app =
+  document.getElementById("app");
+
+const scenes =
+  document.querySelectorAll(".scene");
+
+const enterButton =
+  document.getElementById(
+    "enterButton"
+  );
+
+const flash =
+  document.getElementById(
+    "flash"
+  );
+
+const loadingBar =
+  document.getElementById(
+    "loadingBar"
+  );
+
+const loadingPercent =
+  document.getElementById(
+    "loadingPercent"
+  );
+
+const playerHud =
+  document.getElementById(
+    "playerHud"
+  );
+
+const missionHud =
+  document.getElementById(
+    "missionHud"
+  );
+
+const bgm =
+  document.getElementById(
+    "bgm"
+  );
+
+const clickSound =
+  document.getElementById(
+    "clickSound"
+  );
+
+const glitchSound =
+  document.getElementById(
+    "glitchSound"
+  );
+
+const impactSound =
+  document.getElementById(
+    "impactSound"
+  );
+
+const beepSound =
+  document.getElementById(
+    "beepSound"
+  );
+
+const revealSound =
+  document.getElementById(
+    "revealSound"
+  );
+
+let started=false;
+let soundEnabled=true;
+let timers=[];
+let loadingTimer=null;
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+const particleContainer =
+  document.getElementById(
+    "particles"
+  );
+
+for(let i=0;i<60;i++){
+
+  const particle =
+    document.createElement(
+      "span"
+    );
+
+  particle.className=
+    "particle";
+
+  particle.style.left=
+    Math.random()*100+"%";
+
+  particle.style.animationDuration=
+    (6+Math.random()*10)+"s";
+
+  particle.style.animationDelay=
+    (-Math.random()*10)+"s";
+
+  particle.style.opacity=
+    Math.random();
+
+  particleContainer
+    .appendChild(
+      particle
+    );
+
+}
+
+/* =========================================================
+   SHOW SCENE
+========================================================= */
+
+function showScene(id){
+
+  scenes.forEach(scene=>{
+
+    scene.classList.remove(
+      "active"
+    );
+
+  });
+
+  document
+    .getElementById(id)
+    .classList.add(
+      "active"
+    );
+
+}
+
+/* =========================================================
+   FLASH
+========================================================= */
+
+function flashEffect(){
+
+  flash.classList.remove(
+    "go"
+  );
+
+  void flash.offsetWidth;
+
+  flash.classList.add(
+    "go"
+  );
+
+}
+
+/* =========================================================
+   SHAKE
+========================================================= */
+
+function shake(){
+
+  app.classList.remove(
+    "shake"
+  );
+
+  void app.offsetWidth;
+
+  app.classList.add(
+    "shake"
+  );
+
+}
+
+/* =========================================================
+   GLITCH
+========================================================= */
+
+function glitch(){
+
+  app.classList.remove(
+    "glitch"
+  );
+
+  void app.offsetWidth;
+
+  app.classList.add(
+    "glitch"
+  );
+
+}
+
+/* =========================================================
+   PLAY SOUND
+========================================================= */
+
+function playSound(audio){
+
+  if(!soundEnabled){
+    return;
+  }
+
+  audio.currentTime=0;
+
+  audio.play()
+    .catch(()=>{});
+
+}
+
+/* =========================================================
+   SCHEDULE
+========================================================= */
+
+function schedule(fn,time){
+
+  const id=
+    setTimeout(
+      fn,
+      time
+    );
+
+  timers.push(id);
+
+}
+
+/* =========================================================
+   FULLSCREEN MANUAL
+========================================================= */
+
+document
+.getElementById(
+  "fullscreenBtn"
+)
+.addEventListener(
+  "click",
+  async()=>{
+
+    try{
+
+      if(
+        !document.fullscreenElement
+      ){
+
+        await
+        document
+        .documentElement
+        .requestFullscreen();
+
+      }
+      else{
+
+        await
+        document
+        .exitFullscreen();
+
+      }
+
+    }
+    catch(e){
+
+      console.log(
+        "Fullscreen unavailable"
+      );
+
+    }
+
+  }
+);
+
+/* =========================================================
+   SOUND CONTROL
+========================================================= */
+
+document
+.getElementById(
+  "soundBtn"
+)
+.addEventListener(
+  "click",
+  ()=>{
+
+    soundEnabled=
+      !soundEnabled;
+
+    const button=
+      document.getElementById(
+        "soundBtn"
+      );
+
+    if(soundEnabled){
+
+      button.textContent=
+        "🔊 Sound On";
+
+      if(started){
+
+        bgm.play()
+          .catch(()=>{});
+
+      }
+
+    }
+    else{
+
+      button.textContent=
+        "🔇 Sound Off";
+
+      bgm.pause();
+
+    }
+
+  }
+);
+
+/* =========================================================
+   RESTART
+========================================================= */
+
+document
+.getElementById(
+  "restartBtn"
+)
+.addEventListener(
+  "click",
+  ()=>{
+
+    restartExperience();
+
+  }
+);
+
+function restartExperience(){
+
+  timers.forEach(id=>{
+    clearTimeout(id);
+  });
+
+  timers=[];
+
+  if(loadingTimer){
+    clearInterval(
+      loadingTimer
+    );
+  }
+
+  loadingTimer=null;
+
+  started=false;
+
+  bgm.pause();
+  bgm.currentTime=0;
+
+  loadingBar.style.width=
+    "0%";
+
+  loadingPercent.textContent=
+    "0%";
+
+  playerHud.textContent=
+    "PLAYER: STANDBY";
+
+  missionHud.textContent=
+    "MISSION: LOCKED";
+
+  showScene(
+    "scene0"
+  );
+
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+function startLoading(){
+
+  let value=0;
+
+  loadingBar.style.width=
+    "0%";
+
+  loadingPercent.textContent=
+    "0%";
+
+  loadingTimer=
+    setInterval(
+      ()=>{
+
+        value+=
+          Math.floor(
+            Math.random()*5
+          )+2;
+
+        if(value>=100){
+
+          value=100;
+
+        }
+
+        loadingBar.style.width=
+          value+"%";
+
+        loadingPercent.textContent=
+          value+"%";
+
+        if(value===100){
+
+          clearInterval(
+            loadingTimer
+          );
+
+          loadingTimer=null;
+
+        }
+
+      },
+      145
+    );
+
+}
+
+/* =========================================================
+   COUNTDOWN
+========================================================= */
+
+function startCountdown(){
+
+  const number=
+    document.getElementById(
+      "countNumber"
+    );
+
+  let value=3;
+
+  number.textContent=
+    value;
+
+  playSound(
+    beepSound
+  );
+
+  const timer=
+    setInterval(
+      ()=>{
+
+        value--;
+
+        if(value>0){
+
+          number.textContent=
+            value;
+
+          playSound(
+            beepSound
+          );
+
+          shake();
+
+        }
+        else{
+
+          clearInterval(
+            timer
+          );
+
+        }
+
+      },
+      1200
+    );
+
+}
+
+/* =========================================================
+   MAIN EXPERIENCE
+========================================================= */
+
+enterButton
+.addEventListener(
+  "click",
+  ()=>{
+
+    if(started){
+      return;
+    }
+
+    started=true;
+
+    /* =============================================
+       AUDIO STARTS AUTOMATICALLY AFTER FIRST CLICK
+       Browser allows this because user interacted.
+    ============================================= */
+
+    if(soundEnabled){
+
+      bgm.volume=.42;
+
+      bgm.play()
+        .catch(()=>{});
+
+    }
+
+    playSound(
+      clickSound
+    );
+
+    playerHud.textContent=
+      "PLAYER: CONNECTED";
+
+    /* ==========================================
+       0 SEC
+       PLAYER CONNECTED
+    ========================================== */
+
+    showScene(
+      "sceneConnected"
+    );
+
+    flashEffect();
+
+    playSound(
+      impactSound
+    );
+
+    /* ==========================================
+       4.5 SEC
+       MISSION DETECTED
+    ========================================== */
+
+    schedule(
+      ()=>{
+
+        missionHud.textContent=
+          "MISSION: DETECTED";
+
+        showScene(
+          "sceneMission"
+        );
+
+        glitch();
+
+        playSound(
+          glitchSound
+        );
+
+      },
+      4500
+    );
+
+    /* ==========================================
+       9 SEC
+       FIND CLUE
+    ========================================== */
+
+    schedule(
+      ()=>{
+
+        showScene(
+          "sceneClue"
+        );
+
+        playSound(
+          impactSound
+        );
+
+      },
+      9000
+    );
+
+    /* ==========================================
+       13.5 SEC
+       SOLVE PROBLEM
+    ========================================== */
+
+    schedule(
+      ()=>{
+
+        showScene(
+          "sceneProblem"
+        );
+
+        glitch();
+
+        playSound(
+          glitchSound
+        );
+
+      },
+      13500
+    );
+
+    /* ==========================================
+       18 SEC
+       MAKE MOVE
+    ========================================== */
+
+    schedule(
+      ()=>{
+
+        showScene(
+          "sceneMove"
+        );
+
+        shake();
+
+        playSound(
+          impactSound
+        );
+
+      },
+      18000
+    );
+
+    /* ==========================================
+       22.5 SEC
+       LEVEL UP
+    ========================================== */
+
+    schedule(
+      ()=>{
+
+        showScene(
+          "sceneLevel"
+        );
+
+        flashEffect();
+
+        playSound(
+          impactSound
+        );
+
+      },
+      22500
+    );
+
+    /* ==========================================
+       27 SEC
+       LOADING
+    ========================================== */
+
+    schedule(
+      ()=>{
+
+        showScene(
+          "sceneLoading"
+        );
+
+        startLoading();
+
+      },
+      27000
+    );
+
+    /* ==========================================
+       33 SEC
+       SYSTEM READY
+    ========================================== */
+
+    schedule(
+      ()=>{
+
+        missionHud.textContent=
+          "MISSION: UNLOCKED";
+
+        showScene(
+          "sceneReady"
+        );
+
+        flashEffect();
+
+        shake();
+
+        playSound(
+          impactSound
+        );
+
+      },
+      33000
+    );
+
+    /* ==========================================
+       38 SEC
+       COUNTDOWN
+    ========================================== */
+
+    schedule(
+      ()=>{
+
+        showScene(
+          "sceneCountdown"
+        );
+
+        startCountdown();
+
+      },
+      38000
+    );
+
+    /* ==========================================
+       42 SEC
+       MAIN REVEAL
+    ========================================== */
+
+    schedule(
+      ()=>{
+
+        playerHud.textContent=
+          "PLAYER: READY";
+
+        missionHud.textContent=
+          "MISSION: ACTIVE";
+
+        flashEffect();
+
+        shake();
+
+        glitch();
+
+        playSound(
+          revealSound
+        );
+
+        showScene(
+          "sceneReveal"
+        );
+
+      },
+      42000
+    );
+
+    /* ==========================================
+       50 SEC
+       FINAL
+    ========================================== */
+
+    schedule(
+      ()=>{
+
+        flashEffect();
+
+        playSound(
+          impactSound
+        );
+
+        showScene(
+          "sceneFinal"
+        );
+
+      },
+      50000
+    );
+
+  }
+);
+
+</script>
+
+</body>
+</html>
