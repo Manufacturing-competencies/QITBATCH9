@@ -1318,6 +1318,167 @@ html:-webkit-full-screen .finalStatus{
   display:none !important;
 }
 
+
+/* ==============================
+   PREMIUM CINEMATIC POLISH
+============================== */
+#app::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg,transparent 0 49.8%,rgba(115,228,255,.035) 50%,transparent 50.2%),
+    linear-gradient(0deg,transparent 0 49.8%,rgba(115,228,255,.025) 50%,transparent 50.2%);
+  background-size:100% 100%,100% 100%;
+  mix-blend-mode:screen;
+}
+
+#app::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:3;
+  pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 4px);
+  opacity:.22;
+}
+
+.logoBar{top:20px}
+.logoCapsule{
+  height:50px;
+  border-color:rgba(255,255,255,.82);
+  box-shadow:0 10px 35px rgba(0,0,0,.35),0 0 30px rgba(72,230,255,.12);
+}
+
+.scene{z-index:10}
+.scene::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:min(76vw,860px);
+  height:min(76vw,860px);
+  transform:translate(-50%,-50%);
+  border:1px solid rgba(111,225,255,.055);
+  border-radius:50%;
+  box-shadow:0 0 120px rgba(71,198,255,.035),inset 0 0 100px rgba(111,75,255,.025);
+  pointer-events:none;
+}
+
+.eyebrow{
+  position:relative;
+  text-shadow:0 0 16px rgba(106,232,255,.38);
+}
+.eyebrow::before,.eyebrow::after{
+  content:"";
+  display:inline-block;
+  width:42px;
+  height:1px;
+  vertical-align:middle;
+  margin:0 13px;
+  background:linear-gradient(90deg,transparent,rgba(110,232,255,.72));
+}
+.eyebrow::after{background:linear-gradient(90deg,rgba(110,232,255,.72),transparent)}
+
+/* HUD corner markers */
+.scene::after{
+  content:"QIT // 09  •  MISSION CONTROL";
+  position:absolute;
+  left:28px;
+  bottom:24px;
+  font-size:9px;
+  letter-spacing:.24em;
+  color:rgba(159,225,255,.30);
+  text-transform:uppercase;
+  pointer-events:none;
+}
+
+.enterButton{
+  border-radius:999px;
+  min-height:62px;
+  background:linear-gradient(100deg,rgba(38,70,155,.46),rgba(10,135,155,.24));
+  box-shadow:0 0 0 1px rgba(91,222,255,.08),0 0 35px rgba(46,201,255,.16),inset 0 0 25px rgba(91,228,255,.05);
+  animation:buttonPulse 2.2s ease-in-out infinite;
+}
+.enterButton:active{transform:scale(.97)}
+
+.statusBox{
+  position:relative;
+  overflow:hidden;
+}
+.statusBox::before{
+  content:"";
+  position:absolute;
+  left:0;top:0;width:2px;height:100%;
+  background:linear-gradient(180deg,transparent,var(--cyan),transparent);
+  animation:statusScan 2.4s linear infinite;
+}
+@keyframes statusScan{from{transform:translateY(-100%)}to{transform:translateY(100%)}}
+
+/* Enhanced reveal */
+#sceneReveal::before{width:min(90vw,1100px);height:min(90vw,1100px);border-color:rgba(255,213,74,.07)}
+.qitTitle{
+  font-weight:950;
+  text-shadow:0 0 30px rgba(72,230,255,.55),0 0 80px rgba(118,87,255,.20);
+  animation:titleShine 2.1s linear infinite, qitBreath 1.8s ease-in-out infinite alternate;
+}
+@keyframes qitBreath{from{transform:scale(1)}to{transform:scale(1.025)}}
+.kickoff{text-shadow:0 0 25px rgba(255,213,74,.58),0 0 70px rgba(255,213,74,.14)}
+
+/* Countdown becomes a cinematic arena */
+#sceneCountdown::before{
+  width:min(70vw,720px);height:min(70vw,720px);
+  border:1px dashed rgba(72,230,255,.18);
+  animation:countRing 8s linear infinite;
+}
+@keyframes countRing{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.countNumber{
+  filter:drop-shadow(0 0 24px rgba(72,230,255,.32));
+}
+
+/* Final scene premium finish */
+#sceneFinal::before{
+  width:min(86vw,1000px);height:min(86vw,1000px);
+  border:1px solid rgba(255,213,74,.08);
+  box-shadow:0 0 100px rgba(255,213,74,.06),inset 0 0 120px rgba(72,230,255,.05);
+  animation:finalRing 12s linear infinite;
+}
+@keyframes finalRing{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.finalTitle{
+  font-weight:950;
+  text-shadow:0 0 30px rgba(72,219,255,.32),0 0 80px rgba(255,213,74,.10);
+}
+.finalContent{max-width:1100px}
+
+/* cinematic flash */
+.flash.go{animation:flashAnim .48s ease}
+@keyframes flashAnim{
+  0%{opacity:0}
+  12%{opacity:.98}
+  25%{opacity:.14}
+  100%{opacity:0}
+}
+
+@media(max-width:700px){
+  .eyebrow::before,.eyebrow::after{width:18px;margin:0 7px}
+  .scene::after{left:14px;bottom:16px;font-size:7px}
+  .logoBar{top:12px;left:12px;right:12px}
+}
+
+
+.missionHud{
+  position:absolute;left:50%;top:84px;transform:translateX(-50%);
+  z-index:75;display:flex;align-items:center;gap:12px;
+  padding:7px 14px;border:1px solid rgba(104,219,255,.10);
+  border-radius:999px;background:rgba(4,13,31,.38);backdrop-filter:blur(10px);
+  color:rgba(175,232,255,.38);font-size:8px;letter-spacing:.22em;text-transform:uppercase;
+  white-space:nowrap;box-shadow:0 0 24px rgba(60,210,255,.05);
+}
+.missionHud i{width:3px;height:3px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+@media(max-width:700px){.missionHud{top:72px;max-width:86vw;overflow:hidden;font-size:6px;gap:7px}}
+
 </style>
 </head>
 
@@ -1354,6 +1515,10 @@ html:-webkit-full-screen .finalStatus{
         PARAGONCORP
       </div>
     </div>
+  </div>
+
+  <div class="missionHud" aria-hidden="true">
+    <span>QIT-09</span><i></i><span>SYSTEM ONLINE</span><i></i><span>MISSION CONTROL</span>
   </div>
 
   <section class="scene active" id="scene0">
@@ -1603,7 +1768,7 @@ html:-webkit-full-screen .finalStatus{
       </div>
 
       <div class="revealStage kickoff" id="revealKick">
-        KICK OFF
+        THE JOURNEY CONTINUES
       </div>
 
       <div class="revealStage tagline" id="revealTag">
@@ -1631,9 +1796,9 @@ html:-webkit-full-screen .finalStatus{
       </div>
 
       <div class="finalStatus">
-        <div class="finalChip">Mission Status: Active</div>
-        <div class="finalChip">Player Status: Ready</div>
-        <div class="finalChip">Next Objective: Start Improvement</div>
+        <div class="finalChip">Mission Status: ACTIVE</div>
+        <div class="finalChip">Player Status: READY</div>
+        <div class="finalChip">Next Objective: IMPROVEMENT</div>
       </div>
     </div>
   </section>
@@ -1669,6 +1834,10 @@ html:-webkit-full-screen .finalStatus{
   <source src="reveal.mp3" type="audio/mpeg">
 </audio>
 
+<audio id="gongAudio" preload="auto">
+  <source src="gong.wav" type="audio/wav">
+</audio>
+
 <script>
 const app = document.getElementById("app");
 const scenes = document.querySelectorAll(".scene");
@@ -1684,6 +1853,7 @@ const clickSound = document.getElementById("clickSound");
 const glitchSound = document.getElementById("glitchSound");
 const impactSound = document.getElementById("impactSound");
 const revealSound = document.getElementById("revealSound");
+const gongAudio = document.getElementById("gongAudio");
 const warpSub = document.getElementById("warpSub");
 const recoverySub = document.getElementById("recoverySub");
 const sparkContainer = document.getElementById("sparks");
@@ -1978,6 +2148,47 @@ function achievementChime(){
   subBoom(.055);
 }
 
+
+function gongSound(intensity=1){
+  ensureAudioContext();
+  const now = audioCtx.currentTime;
+
+  // Layered metallic partials for a deep ceremonial gong.
+  const partials = [
+    [98, .17, 5.8], [147, .12, 5.2], [196, .09, 4.7],
+    [294, .065, 3.9], [392, .045, 3.3], [587, .028, 2.8]
+  ];
+
+  partials.forEach(([freq,g,dur],i)=>{
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    const filter = audioCtx.createBiquadFilter();
+    osc.type = i < 2 ? "sine" : "triangle";
+    osc.frequency.setValueAtTime(freq,now);
+    osc.detune.setValueAtTime((i%2 ? -5 : 4),now);
+    filter.type="lowpass";
+    filter.frequency.setValueAtTime(2400,now);
+    filter.frequency.exponentialRampToValueAtTime(520,dur*0.82+now);
+    gain.gain.setValueAtTime(.0001,now);
+    gain.gain.exponentialRampToValueAtTime(g*intensity,now+.018);
+    gain.gain.exponentialRampToValueAtTime(.0001,now+dur);
+    osc.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(now); osc.stop(now+dur+.05);
+  });
+
+  // Soft high-frequency strike.
+  const strike = audioCtx.createOscillator();
+  const strikeGain = audioCtx.createGain();
+  strike.type="triangle";
+  strike.frequency.setValueAtTime(820,now);
+  strike.frequency.exponentialRampToValueAtTime(260,now+1.4);
+  strikeGain.gain.setValueAtTime(.0001,now);
+  strikeGain.gain.exponentialRampToValueAtTime(.055*intensity,now+.008);
+  strikeGain.gain.exponentialRampToValueAtTime(.0001,now+1.6);
+  strike.connect(strikeGain); strikeGain.connect(audioCtx.destination);
+  strike.start(now); strike.stop(now+1.65);
+}
+
 function subBoom(level=.07){
   ensureAudioContext();
   const now = audioCtx.currentTime;
@@ -2172,7 +2383,9 @@ function startRevealStages(){
     flashEffect("gold");
     shake();
     playSound(revealSound,1);
-    burstSparks(26,"gold");
+    playSound(gongAudio,1.0);
+    gongSound(.18);
+    burstSparks(38,"gold");
   },3200);
 
   schedule(()=>{
@@ -2329,6 +2542,7 @@ enterButton.addEventListener("click",()=>{
     flashEffect("gold");
     burstSparks(14,"gold");
     achievementChime();
+    playSound(gongAudio,.52);
 
     schedule(()=>{
       restoreBgm(.30,1200);
@@ -2373,6 +2587,8 @@ enterButton.addEventListener("click",()=>{
     subBoom(.09);
     burstSparks(18,"gold");
     playSound(impactSound,.68);
+    playSound(gongAudio,1.0);
+    gongSound(.20);
     showScene("sceneFinal");
 
     schedule(()=>burstSparks(40),1200);
