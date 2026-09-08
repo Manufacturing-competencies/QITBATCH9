@@ -2864,6 +2864,9 @@ button{
 .syncControl:hover{opacity:1;border-color:rgba(72,230,255,.62);box-shadow:0 0 18px rgba(72,230,255,.18);}
 .syncDot{width:7px;height:7px;border-radius:50%;background:#7bf0ff;box-shadow:0 0 10px rgba(123,240,255,.75);}
 .syncControl.off .syncDot{background:#6c7380;box-shadow:none;}
+.peerReplay{position:absolute;left:22px;bottom:58px;z-index:96;display:flex;align-items:center;gap:7px;padding:8px 11px;border-radius:999px;border:1px solid rgba(255,213,74,.18);background:rgba(5,15,37,.54);backdrop-filter:blur(10px);color:rgba(255,239,183,.80);font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;opacity:.42;transition:opacity .2s ease,border-color .2s ease,box-shadow .2s ease;}
+.peerReplay:hover{opacity:1;border-color:rgba(255,213,74,.55);box-shadow:0 0 18px rgba(255,213,74,.16);}
+
 
 .objectiveLabel{
   font-size:10px;
@@ -3071,6 +3074,33 @@ html:-webkit-full-screen .finalStatus{
 ========================================================= */
 
 @media(max-width:700px){
+
+  .syncControl{
+    left:10px;
+    bottom:10px;
+    padding:9px 12px;
+    font-size:9px;
+    opacity:.96;
+    z-index:999;
+    background:rgba(5,15,37,.90);
+    border:1px solid rgba(72,230,255,.55);
+    box-shadow:0 0 16px rgba(72,230,255,.18);
+  }
+
+  .peerReplay{
+    left:10px;
+    bottom:50px;
+    padding:9px 12px;
+    font-size:9px;
+    opacity:.92;
+    z-index:999;
+    background:rgba(5,15,37,.88);
+  }
+
+  .syncDot{
+    width:8px;
+    height:8px;
+  }
 
   .logoBar{
     top:12px;
@@ -4235,6 +4265,10 @@ html:-webkit-full-screen .finalStatus{
     <span id="syncText">SYNC LOCAL</span>
   </button>
 
+  <button class="peerReplay" id="peerReplay" type="button" title="Replay / reset all connected devices">
+    ↻ REPLAY ALL
+  </button>
+
   <!-- FULLSCREEN -->
   <button
     class="fullscreenBtn"
@@ -4388,6 +4422,7 @@ const dustContainer =
 
 const syncControl = document.getElementById("syncControl");
 const syncText = document.getElementById("syncText");
+const peerReplay = document.getElementById("peerReplay");
 
 
 /* =========================================================
@@ -6345,30 +6380,79 @@ document.addEventListener(
 
 
 /* =========================================================
-   MIRROR / SYNC ENGINE
+   MIRROR / SYNC ENGINE — EQUAL RIGHTS
+   Anyone in the same room can START or REPLAY ALL.
 ========================================================= */
-function updateSyncUi(){
+function updateSyncUi(stateText=""){
   if(!syncControl || !syncText) return;
   syncControl.classList.toggle("off",syncMode==="off");
-  syncText.textContent = syncMode==="online" ? "SYNC ONLINE" : syncMode==="local" ? "SYNC LOCAL" : "SYNC OFF";
+
+  if(stateText){
+    syncText.textContent = stateText;
+    return;
+  }
+
+  if(syncMode==="online"){
+    syncText.textContent = SYNC_CONFIG.databaseURL ? "SYNC ONLINE • CONNECTED" : "SYNC ONLINE • SET URL";
+  }else if(syncMode==="local"){
+    syncText.textContent = "SYNC LOCAL";
+  }else{
+    syncText.textContent = "SYNC OFF";
+  }
 }
+
+function clearExperienceTimers(){
+  timelineTimers.forEach(timer=>clearTimeout(timer));
+  timelineTimers=[];
+  if(loadingTimer){
+    clearInterval(loadingTimer);
+    loadingTimer=null;
+  }
+}
+
+function resetExperienceLocal(){
+  clearExperienceTimers();
+  started=false;
+  resetRevealStages();
+
+  try{
+    bgm.pause();
+    bgm.currentTime=0;
+    bgm.volume=bgmVolume;
+  }catch(e){}
+
+  if(loadingBar) loadingBar.style.width="0%";
+  if(loadingPercent) loadingPercent.textContent="0%";
+  if(countNumber) countNumber.textContent="3";
+  if(recoverySub) recoverySub.textContent="Analyzing challenge data";
+  if(warpSub) warpSub.textContent="CONNECTING TO CHALLENGE CORE...";
+
+  showScene("scene0");
+}
+
 function initLocalMirror(){
   if("BroadcastChannel" in window){
     mirrorChannel = new BroadcastChannel("qit-batch-9-mirror");
     mirrorChannel.onmessage = event => {
       const data = event.data || {};
       if(syncMode !== "local") return;
-      if(data.type === "START") scheduleMirrorStart(data.startAt);
-      if(data.type === "RESET") location.reload();
+      if(data.type === "START") scheduleMirrorStart(data.executeAt || data.startAt);
+      if(data.type === "RESET") resetExperienceLocal();
     };
   }
   updateSyncUi();
 }
-function scheduleMirrorStart(startAt){
+
+function scheduleMirrorStart(executeAt){
   if(started) return;
-  const delay = Math.max(0,startAt-Date.now());
-  setTimeout(()=>{ if(!started) startExperienceCore(); },delay);
+  const delay = Math.max(0,executeAt-Date.now());
+  updateSyncUi(syncMode==="online" ? "SYNC ONLINE • STARTING" : "SYNC LOCAL • STARTING");
+  setTimeout(()=>{
+    if(!started) startExperienceCore();
+    updateSyncUi();
+  },delay);
 }
+
 async function firebaseWrite(payload){
   if(!SYNC_CONFIG.databaseURL) throw new Error("Firebase databaseURL empty");
   const base=SYNC_CONFIG.databaseURL.replace(/\/$/,"");
@@ -6376,6 +6460,7 @@ async function firebaseWrite(payload){
   const res=await fetch(url,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
   if(!res.ok) throw new Error("sync write failed");
 }
+
 async function firebaseRead(){
   if(!SYNC_CONFIG.databaseURL) return null;
   const base=SYNC_CONFIG.databaseURL.replace(/\/$/,"");
@@ -6384,43 +6469,136 @@ async function firebaseRead(){
   if(!res.ok) throw new Error("sync read failed");
   return await res.json();
 }
+
 function startOnlineMirror(){
   if(onlinePollTimer){clearInterval(onlinePollTimer);onlinePollTimer=null;}
-  if(!SYNC_CONFIG.databaseURL){updateSyncUi();return;}
+
+  if(!SYNC_CONFIG.databaseURL){
+    updateSyncUi("SYNC ONLINE • SET URL");
+    return;
+  }
+
+  updateSyncUi("SYNC ONLINE • CONNECTING");
+
+  // Fast first read so stale events are ignored before polling starts.
+  firebaseRead().then(data=>{
+    if(data && data.eventId) lastRemoteEventId=data.eventId;
+    updateSyncUi("SYNC ONLINE • CONNECTED");
+  }).catch(()=>updateSyncUi("SYNC ONLINE • ERROR"));
+
   onlinePollTimer=setInterval(async()=>{
     if(syncMode!=="online") return;
     try{
       const data=await firebaseRead();
       if(!data || !data.eventId || data.eventId===lastRemoteEventId) return;
       lastRemoteEventId=data.eventId;
-      if(data.type==="START" && data.startAt>Date.now()-10000) scheduleMirrorStart(data.startAt);
-      if(data.type==="RESET") location.reload();
-    }catch(e){}
+
+      if(data.type==="START"){
+        const executeAt=data.executeAt || data.startAt;
+        if(executeAt && executeAt>Date.now()-10000) scheduleMirrorStart(executeAt);
+      }
+
+      if(data.type==="RESET"){
+        resetExperienceLocal();
+        updateSyncUi("SYNC ONLINE • RESET RECEIVED");
+        setTimeout(()=>updateSyncUi(),900);
+      }
+    }catch(e){
+      updateSyncUi("SYNC ONLINE • ERROR");
+    }
   },SYNC_CONFIG.pollMs);
 }
-async function broadcastStart(startAt){
-  const payload={type:"START",startAt,eventId:(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random())};
+
+function newEventId(){
+  return (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())+Math.random());
+}
+
+async function broadcastStart(executeAt){
+  const payload={
+    type:"START",
+    executeAt,
+    eventId:newEventId(),
+    sentAt:Date.now()
+  };
+
   if(syncMode==="local" && mirrorChannel) mirrorChannel.postMessage(payload);
+
   if(syncMode==="online"){
-    try{lastRemoteEventId=payload.eventId;await firebaseWrite(payload);}catch(e){}
+    try{
+      lastRemoteEventId=payload.eventId;
+      await firebaseWrite(payload);
+      updateSyncUi("SYNC ONLINE • START SENT");
+    }catch(e){
+      updateSyncUi("SYNC ONLINE • SEND ERROR");
+    }
   }
 }
+
+async function broadcastReset(){
+  const payload={
+    type:"RESET",
+    eventId:newEventId(),
+    sentAt:Date.now()
+  };
+
+  if(syncMode==="local" && mirrorChannel) mirrorChannel.postMessage(payload);
+
+  if(syncMode==="online"){
+    try{
+      lastRemoteEventId=payload.eventId;
+      await firebaseWrite(payload);
+      updateSyncUi("SYNC ONLINE • RESET SENT");
+    }catch(e){
+      updateSyncUi("SYNC ONLINE • SEND ERROR");
+    }
+  }
+}
+
 function requestSyncedStart(){
   if(started) return;
+
   if(syncMode==="off") return startExperienceCore();
-  const lead=syncMode==="online"?SYNC_CONFIG.leadTimeMs:450;
-  const startAt=Date.now()+lead;
-  broadcastStart(startAt);
-  scheduleMirrorStart(startAt);
+
+  if(syncMode==="online" && !SYNC_CONFIG.databaseURL){
+    updateSyncUi("SYNC ONLINE • SET URL");
+    return;
+  }
+
+  const lead=syncMode==="online" ? SYNC_CONFIG.leadTimeMs : 450;
+  const executeAt=Date.now()+lead;
+  broadcastStart(executeAt);
+  scheduleMirrorStart(executeAt);
 }
+
+async function requestGlobalReplay(){
+  if(syncMode==="online" && !SYNC_CONFIG.databaseURL){
+    updateSyncUi("SYNC ONLINE • SET URL");
+    return;
+  }
+
+  if(syncMode!=="off") await broadcastReset();
+  resetExperienceLocal();
+  setTimeout(()=>updateSyncUi(),900);
+}
+
 if(syncControl){
   syncControl.addEventListener("click",()=>{
     syncMode=syncMode==="off"?"local":syncMode==="local"?"online":"off";
+
     if(syncMode==="online") startOnlineMirror();
-    else if(onlinePollTimer){clearInterval(onlinePollTimer);onlinePollTimer=null;}
+    else if(onlinePollTimer){
+      clearInterval(onlinePollTimer);
+      onlinePollTimer=null;
+    }
+
     updateSyncUi();
   });
 }
+
+if(peerReplay){
+  peerReplay.addEventListener("click",requestGlobalReplay);
+}
+
 initLocalMirror();
 
 /* =========================================================
@@ -7134,6 +7312,7 @@ enterButton.addEventListener("click",requestSyncedStart);
 document.addEventListener("keydown",(e)=>{
   if(e.code==="Space" && !started){e.preventDefault();requestSyncedStart();}
   if(e.key && e.key.toLowerCase()==="s" && syncControl){syncControl.click();}
+  if(e.key && e.key.toLowerCase()==="r"){e.preventDefault();requestGlobalReplay();}
 });
 
 
