@@ -4647,6 +4647,16 @@ body{
   >
 </audio>
 
+<audio
+  id="sirineSound"
+  preload="auto"
+>
+  <source
+    src="Sirine.mp3"
+    type="audio/mpeg"
+  >
+</audio>
+
 <script>
 
 /* =========================================================
@@ -4703,6 +4713,9 @@ const impactSound =
 
 const revealSound =
   document.getElementById("revealSound");
+
+const sirineSound =
+  document.getElementById("sirineSound");
 
 const warpSub =
   document.getElementById("warpSub");
@@ -7578,6 +7591,12 @@ function startExperienceCore(){
 
       showScene(
         "sceneFinal"
+      );
+
+      /* Sirine police opening — user-supplied Sirine.mp3 */
+      playSound(
+        sirineSound,
+        .58
       );
 
 
