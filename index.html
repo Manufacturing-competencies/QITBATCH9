@@ -1691,6 +1691,31 @@ button{
 }
 
 /* =========================================================
+   READY — SYSTEM LOCK ON
+========================================================= */
+#sceneReady{overflow:hidden;}
+.readyContent{position:relative;z-index:6;width:min(92vw,1000px);text-align:center;}
+.readyCore{position:absolute;left:50%;top:50%;width:430px;height:430px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.18) 0 2%,rgba(72,230,255,.17) 8%,rgba(118,87,255,.15) 26%,transparent 66%);filter:blur(1px);animation:readyCorePulse .72s ease-in-out infinite alternate;}
+.readyRing{position:absolute;left:50%;top:50%;border-radius:50%;transform:translate(-50%,-50%);border:1px solid rgba(72,230,255,.30);box-shadow:0 0 30px rgba(72,230,255,.12),inset 0 0 28px rgba(118,87,255,.10);}
+.readyRing1{width:330px;height:330px;animation:readyRingPulse 1.15s ease-out infinite;}
+.readyRing2{width:470px;height:470px;border-style:dashed;opacity:.48;animation:readySpin 4s linear infinite;}
+.readyWord{transition:transform .18s ease,filter .18s ease,text-shadow .18s ease;}
+.readyWord.lockHit{animation:readyHit .55s cubic-bezier(.16,.84,.29,1);}
+.readyChecks{margin:26px auto 0;width:min(620px,82vw);display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.readyChecks span{padding:10px 9px;border:1px solid rgba(72,230,255,.18);background:rgba(5,17,42,.40);border-radius:6px;color:rgba(218,238,248,.52);font-size:10px;letter-spacing:.14em;text-transform:uppercase;transition:.25s ease;}
+.readyChecks span b{font-weight:800;color:rgba(218,238,248,.52);}
+.readyChecks span.on{color:#dffcff;border-color:rgba(72,230,255,.65);box-shadow:0 0 24px rgba(72,230,255,.18),inset 0 0 18px rgba(72,230,255,.08);transform:translateY(-2px);}
+.readyChecks span.on b{color:#73f4ff;text-shadow:0 0 10px rgba(72,230,255,.6);}
+.readySub{min-height:22px;transition:.2s ease;}
+#sceneReady.allReady .readyCore{animation:readyAllCore .42s ease-in-out infinite alternate;}
+#sceneReady.allReady .readyRing1{border-color:rgba(255,213,74,.70);box-shadow:0 0 48px rgba(255,213,74,.18),inset 0 0 30px rgba(72,230,255,.16);}
+@keyframes readyCorePulse{from{transform:translate(-50%,-50%) scale(.80);opacity:.45}to{transform:translate(-50%,-50%) scale(1.10);opacity:1}}
+@keyframes readyRingPulse{0%{transform:translate(-50%,-50%) scale(.72);opacity:.15}55%{opacity:.8}100%{transform:translate(-50%,-50%) scale(1.18);opacity:0}}
+@keyframes readySpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes readyHit{0%{transform:scale(1.55);filter:blur(10px);opacity:.2}55%{transform:scale(.94);filter:blur(0);opacity:1}100%{transform:scale(1)}}
+@keyframes readyAllCore{from{transform:translate(-50%,-50%) scale(.9);filter:brightness(1)}to{transform:translate(-50%,-50%) scale(1.18);filter:brightness(1.55)}}
+
+/* =========================================================
    ACHIEVEMENT
 ========================================================= */
 
@@ -4298,19 +4323,29 @@ body{
     id="sceneReady"
   >
 
-    <div>
+    <div class="readyCore"></div>
+    <div class="readyRing readyRing1"></div>
+    <div class="readyRing readyRing2"></div>
 
-      <div class="eyebrow">
-        Initialization Complete
+    <div class="readyContent">
+
+      <div class="eyebrow" id="readyEyebrow">
+        System Check
       </div>
 
-      <div class="cinematicWord">
-        SYSTEM<br>
-        READY
+      <div class="cinematicWord readyWord" id="readyWord">
+        CORE<br>
+        ONLINE
       </div>
 
-      <div class="subTitle">
-        Mission Unlocked
+      <div class="readyChecks">
+        <span id="readyCheck1">CORE <b>STANDBY</b></span>
+        <span id="readyCheck2">MISSION <b>STANDBY</b></span>
+        <span id="readyCheck3">PLAYER <b>STANDBY</b></span>
+      </div>
+
+      <div class="subTitle readySub" id="readySub">
+        Running final system check...
       </div>
 
     </div>
@@ -4722,6 +4757,14 @@ const warpSub =
 
 const recoverySub =
   document.getElementById("recoverySub");
+
+const readyScene = document.getElementById("sceneReady");
+const readyEyebrow = document.getElementById("readyEyebrow");
+const readyWord = document.getElementById("readyWord");
+const readySub = document.getElementById("readySub");
+const readyCheck1 = document.getElementById("readyCheck1");
+const readyCheck2 = document.getElementById("readyCheck2");
+const readyCheck3 = document.getElementById("readyCheck3");
 
 const sparkContainer =
   document.getElementById("sparks");
@@ -6303,6 +6346,74 @@ function startLoading(){
 
 
 /* =========================================================
+   READY SEQUENCE — GAME STYLE
+========================================================= */
+function readyHit(text, sub, checkEl){
+  if(readyWord){
+    readyWord.innerHTML = text;
+    readyWord.classList.remove("lockHit");
+    void readyWord.offsetWidth;
+    readyWord.classList.add("lockHit");
+  }
+  if(readySub) readySub.textContent = sub;
+  if(checkEl){
+    checkEl.classList.add("on");
+    const b=checkEl.querySelector("b");
+    if(b) b.textContent="ONLINE";
+  }
+  flashEffect();
+  shake();
+  subBoom(.075);
+  playSound(impactSound,.55);
+  uiConfirmTone();
+  burstSparks(16);
+}
+
+function startReadySequence(){
+  if(!readyScene) return;
+
+  readyScene.classList.remove("allReady");
+  [readyCheck1,readyCheck2,readyCheck3].forEach(el=>{
+    if(!el) return;
+    el.classList.remove("on");
+    const b=el.querySelector("b");
+    if(b) b.textContent="STANDBY";
+  });
+
+  if(readyEyebrow) readyEyebrow.textContent="System Check";
+  if(readyWord) readyWord.innerHTML="CORE<br>ONLINE";
+  if(readySub) readySub.textContent="Running final system check...";
+
+  readyHit("CORE<br>ONLINE","Power core synchronized",readyCheck1);
+
+  schedule(()=>{
+    readyHit("MISSION<br>LOCKED","Mission route confirmed",readyCheck2);
+  },1050);
+
+  schedule(()=>{
+    readyHit("PLAYER<br>READY","Player authentication confirmed",readyCheck3);
+  },2100);
+
+  schedule(()=>{
+    readyScene.classList.add("allReady");
+    if(readyEyebrow) readyEyebrow.textContent="Initialization Complete";
+    if(readyWord){
+      readyWord.innerHTML="ALL SYSTEMS<br>READY";
+      readyWord.classList.remove("lockHit");
+      void readyWord.offsetWidth;
+      readyWord.classList.add("lockHit");
+    }
+    if(readySub) readySub.textContent="Mission unlocked • Prepare for launch";
+    flashEffect("gold");
+    shake();
+    cinematicGong(.82);
+    subBoom(.14);
+    playSound(impactSound,.86);
+    burstSparks(32,"gold");
+  },3150);
+}
+
+/* =========================================================
    COUNTDOWN SPEECH
 ========================================================= */
 
@@ -6443,12 +6554,12 @@ function startCountdown(){
 
   schedule(
     () => hitCountdown(2),
-    1800
+    1200
   );
 
   schedule(
     () => hitCountdown(1),
-    3600
+    2400
   );
 }
 
@@ -6484,105 +6595,62 @@ function startRevealStages(){
 
   resetRevealStages();
 
-  /* PARAGON */
+  /* Build-up: user supplied Sirine.mp3 now lives HERE */
+  duckBgm(.008,180);
+  playSound(sirineSound,.74);
+  cinematicWhoosh(1.15,.92);
+  syntheticRiser(3.2,1.15);
+
   schedule(() => {
+    revealBrand.classList.add("show");
+    burstSparks(18);
+    cinematicWhoosh(.55,.40);
+  },300);
 
-    revealBrand.classList.add(
-      "show"
-    );
-
-    cinematicWhoosh(
-      1.05,
-      .82
-    );
-
-    playSound(
-      revealSound,
-      .88
-    );
-
-    burstSparks(
-      14
-    );
-
-  },420);
-
-
-  /* QIT */
+  /* MAIN QIT BATCH 9 IMPACT */
   schedule(() => {
+    revealQit.classList.add("show");
 
-    revealQit.classList.add(
-      "show"
-    );
-
-    qitRevealImpact();
-
-  },1750);
-
-
-  /* THE JOURNEY */
-  schedule(() => {
-
-    revealKick.classList.add(
-      "show"
-    );
-
-    duckBgm(
-      .05,
-      180
-    );
-
-    cinematicGong(
-      1.25
-    );
-
-    flashEffect(
-      "gold"
-    );
-
+    flashEffect("gold");
     shake();
-
-    burstSparks(
-      35,
-      "gold"
-    );
-
-    achievementChime(
-      .75
-    );
+    glitch();
+    cinematicGong(1.85);
+    subBoom(.22);
+    playSound(impactSound,1);
+    playSound(revealSound,.95);
+    burstSparks(72,"gold");
 
     schedule(() => {
+      flashEffect();
+      shake();
+      subBoom(.14);
+      burstSparks(46);
+    },260);
 
-      restoreBgm(
-        .30,
-        1000
-      );
+    schedule(() => {
+      cinematicGong(1.15);
+      burstSparks(58,"gold");
+    },720);
+  },1150);
 
-    },900);
-
-  },3450);
-
-
-  /* TAGLINE */
   schedule(() => {
+    revealKick.classList.add("show");
+    flashEffect("gold");
+    achievementChime(.9);
+    burstSparks(34,"gold");
+  },2150);
 
-    revealTag.classList.add(
-      "show"
-    );
+  schedule(() => {
+    revealTag.classList.add("show");
+    cinematicWhoosh(.55,.40);
+    burstSparks(28,"gold");
+    restoreBgm(.20,1400);
+  },3000);
 
-    cinematicWhoosh(
-      .5,
-      .35
-    );
-
-    burstSparks(
-      20,
-      "gold"
-    );
-
-  },4800);
+  /* Final screen intentionally STAYS on QIT BATCH 9 */
+  schedule(() => burstSparks(34,"gold"),4300);
+  schedule(() => burstSparks(26),5900);
 }
-
 
 /* =========================================================
    FULLSCREEN
@@ -6750,6 +6818,13 @@ function resetExperienceLocal(){
   if(countNumber) countNumber.textContent="3";
   if(recoverySub) recoverySub.textContent="Analyzing challenge data";
   if(warpSub) warpSub.textContent="CONNECTING TO CHALLENGE CORE...";
+  if(readyScene) readyScene.classList.remove("allReady");
+  [readyCheck1,readyCheck2,readyCheck3].forEach(el=>{
+    if(!el) return;
+    el.classList.remove("on");
+    const b=el.querySelector("b");
+    if(b) b.textContent="STANDBY";
+  });
 
   showScene("scene0");
 }
@@ -6931,710 +7006,191 @@ initLocalMirror();
 
 function startExperienceCore(){
 
-    if(started){
-      return;
-    }
+  if(started) return;
+  started = true;
+  ensureAudioContext();
 
-    started = true;
+  if(bgm.paused){
+    bgm.volume = bgmVolume;
+    bgm.play().catch(()=>{});
+  }
 
-    ensureAudioContext();
+  playSound(clickSound,.72);
+  uiConfirmTone();
+  syntheticRiser(3.6,.9);
 
+  /* 00.0 — WARP */
+  showScene("sceneWarp");
+  flashEffect();
+  glitch();
+  shake();
+  burstSparks(16);
+  cinematicWhoosh(1.0,.68);
+  playSound(revealSound,.56);
 
-    /* -----------------------------------------------
-       START AUDIO
-    ------------------------------------------------ */
+  schedule(()=>{
+    warpSub.textContent="OPENING DIGITAL GATE...";
+    burstSparks(12);
+  },900);
 
-    if(bgm.paused){
-
-      bgm.volume =
-        bgmVolume;
-
-      bgm.play().catch(
-        () => {}
-      );
-    }
-
-
-    playSound(
-      clickSound,
-      .72
-    );
-
-    uiConfirmTone();
-
-    syntheticRiser(
-      4.8,
-      1
-    );
-
-
-    /* -----------------------------------------------
-       00 — GAME WARP
-    ------------------------------------------------ */
-
-    showScene(
-      "sceneWarp"
-    );
-
-    flashEffect();
-
+  schedule(()=>{
+    warpSub.textContent="SYNCING CHALLENGE CORE...";
     glitch();
+    cinematicWhoosh(.45,.28);
+    burstSparks(14);
+  },2100);
 
+  schedule(()=>{
+    warpSub.textContent="ACCESS COMPLETE";
+    flashEffect();
     shake();
-
-    burstSparks(
-      16
-    );
-
-    cinematicWhoosh(
-      1.2,
-      .7
-    );
-
-    playSound(
-      revealSound,
-      .62
-    );
-
-
-    schedule(() => {
-
-      warpSub.textContent =
-        "OPENING DIGITAL GATE...";
-
-      burstSparks(
-        14
-      );
-
-    },1500);
-
-
-    schedule(() => {
-
-      warpSub.textContent =
-        "SYNCING CHALLENGE CORE...";
-
-      glitch();
-
-      burstSparks(
-        16
-      );
-
-      cinematicWhoosh(
-        .55,
-        .35
-      );
-
-    },3200);
-
-
-    schedule(() => {
-
-      warpSub.textContent =
-        "ACCESS COMPLETE";
-
-      flashEffect();
-
-      shake();
-
-      playSound(
-        impactSound,
-        .72
-      );
-
-      subBoom(
-        .09
-      );
-
-      burstSparks(
-        22
-      );
-
-    },4800);
-
-
-    /* -----------------------------------------------
-       06.2 — PLAYER
-    ------------------------------------------------ */
-
-    schedule(() => {
-
-      showScene(
-        "sceneConnected"
-      );
-
-      flashEffect();
-
-      playSound(
-        impactSound,
-        .55
-      );
-
-      cinematicWhoosh(
-        .6,
-        .4
-      );
-
-    },6200);
-
-
-    /* -----------------------------------------------
-       11.2 — MISSION
-    ------------------------------------------------ */
-
-    schedule(() => {
-
-      showScene(
-        "sceneMission"
-      );
-
-      glitch();
-
-      playSound(
-        glitchSound,
-        .70
-      );
-
-      cinematicWhoosh(
-        .55,
-        .35
-      );
-
-    },11200);
-
-
-    /* -----------------------------------------------
-       16.2 — OBJECTIVE 01
-    ------------------------------------------------ */
-
-    schedule(() => {
-
-      showScene(
-        "sceneClue"
-      );
-
-      playSound(
-        impactSound,
-        .46
-      );
-
-      cinematicWhoosh(
-        .45,
-        .3
-      );
-
-    },16200);
-
-
-    /* -----------------------------------------------
-       21.2 — OBJECTIVE 02
-    ------------------------------------------------ */
-
-    schedule(() => {
-
-      showScene(
-        "sceneProblem"
-      );
-
-      glitch();
-
-      playSound(
-        glitchSound,
-        .60
-      );
-
-      subBoom(
-        .055
-      );
-
-    },21200);
-
-
-    /* -----------------------------------------------
-       26.2 — OBJECTIVE 03
-    ------------------------------------------------ */
-
-    schedule(() => {
-
-      showScene(
-        "sceneMove"
-      );
-
-      shake();
-
-      playSound(
-        impactSound,
-        .50
-      );
-
-      cinematicWhoosh(
-        .45,
-        .3
-      );
-
-    },26200);
-
-
-    /* -----------------------------------------------
-       31.2 — OBJECTIVE 04
-    ------------------------------------------------ */
-
-    schedule(() => {
-
-      showScene(
-        "sceneLevel"
-      );
-
-      flashEffect();
-
-      burstSparks(
-        14
-      );
-
-      playSound(
-        impactSound,
-        .58
-      );
-
-      subBoom(
-        .07
-      );
-
-    },31200);
-
-
-    /* -----------------------------------------------
-       36.2 — LOADING
-    ------------------------------------------------ */
-
-    schedule(() => {
-
-      showScene(
-        "sceneLoading"
-      );
-
-      startLoading();
-
-      burstSparks(
-        16
-      );
-
-      syntheticRiser(
-        2.8,
-        .45
-      );
-
-    },36200);
-
-
-    /* -----------------------------------------------
-       43.8 — SYSTEM ERROR
-    ------------------------------------------------ */
-
-    schedule(() => {
-
-      duckBgm(
-        .04,
-        550
-      );
-
-      showScene(
-        "sceneError"
-      );
-
-      flashEffect(
-        "red"
-      );
-
-      glitch();
-
-      shake();
-
-      burstSparks(
-        26,
-        "red"
-      );
-
-      playSound(
-        glitchSound,
-        .92
-      );
-
-      cinematicSiren(
-        2.0,
-        1
-      );
-
-      digitalAlarm(
-        1
-      );
-
-      subBoom(
-        .18
-      );
-
-    },43800);
-
-
-    /* -----------------------------------------------
-       ERROR SECOND HIT
-    ------------------------------------------------ */
-
-    schedule(() => {
-
-      flashEffect(
-        "red"
-      );
-
-      burstSparks(
-        16,
-        "red"
-      );
-
-      playSound(
-        impactSound,
-        .80
-      );
-
-      cinematicSiren(
-        .8,
-        .7
-      );
-
-      shake();
-
-    },46200);
-
-
-    /* -----------------------------------------------
-       48.2 — RECOVERY
-    ------------------------------------------------ */
-
-    schedule(() => {
-
-      restoreBgm(
-        .14,
-        1200
-      );
-
-      showScene(
-        "sceneRecovery"
-      );
-
-      flashEffect();
-
-      recoverySub.textContent =
-        "SCANNING THE PROBLEM PATH";
-
-      burstSparks(
-        18
-      );
-
-      cinematicWhoosh(
-        1.0,
-        .45
-      );
-
-    },48200);
-
-
-    /* -----------------------------------------------
-       ROOT CAUSE
-    ------------------------------------------------ */
-
-    schedule(() => {
-
-      recoverySub.textContent =
-        "ROOT CAUSE SIGNAL DETECTED";
-
-      playSound(
-        revealSound,
-        .76
-      );
-
-      glitch();
-
-      burstSparks(
-        16
-      );
-
-      subBoom(
-        .12
-      );
-
-    },50200);
-
-
-    /* -----------------------------------------------
-       ROUTE FOUND
-    ------------------------------------------------ */
-
-    schedule(() => {
-
-      recoverySub.textContent =
-        "ROUTE TO IMPROVEMENT FOUND";
-
-      flashEffect();
-
-      shake();
-
-      playSound(
-        impactSound,
-        .92
-      );
-
-      cinematicGong(
-        .72
-      );
-
-      burstSparks(
-        22
-      );
-
-    },52200);
-
-
-    /* -----------------------------------------------
-       54.5 — READY
-    ------------------------------------------------ */
-
-    schedule(() => {
-
-      showScene(
-        "sceneReady"
-      );
-
-      flashEffect();
-
-      shake();
-
-      burstSparks(
-        24
-      );
-
-      playSound(
-        impactSound,
-        .82
-      );
-
-      cinematicWhoosh(
-        .8,
-        .55
-      );
-
-      subBoom(
-        .11
-      );
-
-    },54500);
-
-
-    /* -----------------------------------------------
-       59 — ACHIEVEMENT
-    ------------------------------------------------ */
-
-    schedule(() => {
-
-      duckBgm(
-        .025,
-        500
-      );
-
-      showScene(
-        "sceneAchievement"
-      );
-
-      flashEffect(
-        "gold"
-      );
-
-      burstSparks(
-        32,
-        "gold"
-      );
-
-      cinematicGong(
-        1.35
-      );
-
-      achievementChime(
-        1.15
-      );
-
-      subBoom(
-        .14
-      );
-
-      schedule(() => {
-
-        restoreBgm(
-          .18,
-          1200
-        );
-
-      },1200);
-
-    },59000);
-
-
-    schedule(
-      () => burstSparks(
-        45,
-        "gold"
-      ),
-      60700
-    );
-
-
-    /* -----------------------------------------------
-       64.2 — COUNTDOWN
-    ------------------------------------------------ */
-
-    schedule(() => {
-
-      duckBgm(
-        .018,
-        700
-      );
-
-      showScene(
-        "sceneCountdown"
-      );
-
-      syntheticRiser(
-        4.8,
-        1.1
-      );
-
-      startCountdown();
-
-    },64200);
-
-
-    /* -----------------------------------------------
-       70.5 — REVEAL
-    ------------------------------------------------ */
-
-    schedule(() => {
-
-      duckBgm(
-        .005,
-        250
-      );
-
-      schedule(() => {
-
-        flashEffect();
-
-        shake();
-
-        glitch();
-
-        subBoom(
-          .095
-        );
-
-        burstSparks(
-          20
-        );
-
-        showScene(
-          "sceneReveal"
-        );
-
-        startRevealStages();
-
-      },420);
-
-    },70500);
-
-
-    /* -----------------------------------------------
-       79.5 — FINAL
-    ------------------------------------------------ */
-
-    schedule(() => {
-
-      duckBgm(
-        .02,
-        200
-      );
-
-      flashEffect(
-        "gold"
-      );
-
-      shake();
-
-      cinematicWhoosh(
-        1.0,
-        .9
-      );
-
-      subBoom(
-        .15
-      );
-
-      cinematicGong(
-        1.20
-      );
-
-      burstSparks(
-        40,
-        "gold"
-      );
-
-      playSound(
-        impactSound,
-        .92
-      );
-
-      showScene(
-        "sceneFinal"
-      );
-
-      /* Sirine police opening — user-supplied Sirine.mp3 */
-      playSound(
-        sirineSound,
-        .58
-      );
-
-
-      schedule(
-        () => burstSparks(
-          50
-        ),
-        1200
-      );
-
-
-      schedule(
-        () => burstSparks(
-          55,
-          "gold"
-        ),
-        2800
-      );
-
-
-      schedule(
-        () => burstSparks(
-          40
-        ),
-        4600
-      );
-
-
-      schedule(
-        () => restoreBgm(
-          .22,
-          1000
-        ),
-        900
-      );
-
-    },79500);
-
+    playSound(impactSound,.72);
+    subBoom(.09);
+    burstSparks(20);
+  },3300);
+
+  /* 04.0 — PLAYER CONNECTED */
+  schedule(()=>{
+    showScene("sceneConnected");
+    flashEffect();
+    playSound(impactSound,.54);
+    cinematicWhoosh(.5,.34);
+  },4000);
+
+  /* 07.0 — MISSION */
+  schedule(()=>{
+    showScene("sceneMission");
+    glitch();
+    playSound(glitchSound,.62);
+    cinematicWhoosh(.48,.30);
+  },7000);
+
+  /* 10.0 — PLAN */
+  schedule(()=>{
+    showScene("sceneClue");
+    playSound(impactSound,.44);
+    cinematicWhoosh(.38,.25);
+  },10000);
+
+  /* 13.0 — DO */
+  schedule(()=>{
+    showScene("sceneProblem");
+    glitch();
+    playSound(glitchSound,.52);
+    subBoom(.05);
+  },13000);
+
+  /* 16.0 — CHECK */
+  schedule(()=>{
+    showScene("sceneMove");
+    shake();
+    playSound(impactSound,.48);
+    cinematicWhoosh(.38,.25);
+  },16000);
+
+  /* 19.0 — ACT */
+  schedule(()=>{
+    showScene("sceneLevel");
+    flashEffect();
+    burstSparks(14);
+    playSound(impactSound,.55);
+    subBoom(.065);
+  },19000);
+
+  /* 22.0 — LOADING */
+  schedule(()=>{
+    showScene("sceneLoading");
+    startLoading();
+    burstSparks(14);
+    syntheticRiser(2.4,.40);
+  },22000);
+
+  /* 27.0 — SYSTEM ERROR */
+  schedule(()=>{
+    duckBgm(.035,300);
+    showScene("sceneError");
+    flashEffect("red");
+    glitch();
+    shake();
+    burstSparks(28,"red");
+    playSound(glitchSound,.92);
+    cinematicSiren(1.55,.9);
+    digitalAlarm(.9);
+    subBoom(.17);
+  },27000);
+
+  schedule(()=>{
+    flashEffect("red");
+    burstSparks(18,"red");
+    playSound(impactSound,.74);
+    shake();
+  },29000);
+
+  /* 30.5 — RECOVERY */
+  schedule(()=>{
+    restoreBgm(.12,700);
+    showScene("sceneRecovery");
+    flashEffect();
+    recoverySub.textContent="SCANNING THE PROBLEM PATH";
+    burstSparks(16);
+    cinematicWhoosh(.75,.4);
+  },30500);
+
+  schedule(()=>{
+    recoverySub.textContent="ROOT CAUSE SIGNAL DETECTED";
+    playSound(revealSound,.70);
+    glitch();
+    burstSparks(15);
+    subBoom(.10);
+  },32100);
+
+  schedule(()=>{
+    recoverySub.textContent="ROUTE TO IMPROVEMENT FOUND";
+    flashEffect();
+    shake();
+    playSound(impactSound,.84);
+    cinematicGong(.62);
+    burstSparks(20);
+  },33800);
+
+  /* 36.0 — READY SYSTEM SEQUENCE */
+  schedule(()=>{
+    showScene("sceneReady");
+    startReadySequence();
+  },36000);
+
+  /* 40.5 — ACHIEVEMENT */
+  schedule(()=>{
+    duckBgm(.025,320);
+    showScene("sceneAchievement");
+    flashEffect("gold");
+    burstSparks(34,"gold");
+    cinematicGong(1.22);
+    achievementChime(1.05);
+    subBoom(.13);
+    schedule(()=>restoreBgm(.16,850),750);
+  },40500);
+
+  schedule(()=>burstSparks(40,"gold"),41900);
+
+  /* 44.5 — COUNTDOWN */
+  schedule(()=>{
+    duckBgm(.015,420);
+    showScene("sceneCountdown");
+    syntheticRiser(3.6,1.15);
+    startCountdown();
+  },44500);
+
+  /* 48.5 — FINAL REVEAL — STAYS HERE */
+  schedule(()=>{
+    showScene("sceneReveal");
+    flashEffect();
+    shake();
+    glitch();
+    subBoom(.10);
+    burstSparks(24);
+    startRevealStages();
+  },48500);
 }
 
 enterButton.addEventListener("click",requestSyncedStart);
